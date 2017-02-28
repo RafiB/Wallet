@@ -1,0 +1,21 @@
+{% if not variables and self.formula() %}
+{% block formula %}{% endblock %}
+{% else %}
+<!DOCTYPE HTML>
+
+<html>
+  <head>
+  {% block head %}
+    <title>
+      Calculators
+    </title>
+
+    <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' />
+
+    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.0/css/foundation-flex.min.css' media='all'>
+  {% endblock %}
+  </head>
+
+  {%- block body -%}{%- endblock %}
+</html>
+{% endif %}

@@ -1,0 +1,3 @@
+*.pyc
+.wallet
+wallet.db
