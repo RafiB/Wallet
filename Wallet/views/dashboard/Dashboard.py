@@ -7,4 +7,5 @@ class Dashboard(FlaskView):
     route_base = '/'
 
     def index(self):
-        return render_template('dashboard.html')
+        daily_diff = 213.85
+        return render_template('dashboard.html', daily_diff=daily_diff)

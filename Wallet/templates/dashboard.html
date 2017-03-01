@@ -2,5 +2,31 @@
 
 {% block body -%}
   <body>
+    <div class='top-bar'>
+      <div class='top-bar-left'>
+        <ul class='dropdown menu' data-dropdown-menu>
+          <li class='menu-text'>Wallet</li>
+          <li><a href='{{url_for('Dashboard:index')}}'>Dashboard</a></li>
+          <li><a href='{{url_for('Dashboard:index')}}'>Your Income</a></li>
+          <li><a href='{{url_for('Dashboard:index')}}'>Your Expenses</a></li>
+          <li><a href='{{url_for('Dashboard:index')}}'>Your Rewards</a></li>
+        </ul>
+      </div>
+    </div>
+
+    You are currently {{'saving' if daily_diff > 0 else 'losing'}} money.
+
+    Every day: {{daily_diff}}
+    Every month: {{daily_diff * 365/12}}
+    Every year: {{daily_diff * 365}}
+
+    Your yearly expenses
+    Your estimated savings
+    You will be able to afford your ITEM in TIME_MATHS
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.0/js/foundation.min.js'></script>
+    <script>
+      $(document).foundation();
+    </script>
   </body>
 {% endblock %}
