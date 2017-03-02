@@ -1,0 +1,40 @@
+{% extends 'common.html' %}
+
+{% block body -%}
+  <body>
+    {% include 'navbar.html' %}
+    <h1>Expenses</h1>
+    <form action='{{url_for('Expense:post')}}' method='POST'>
+      <input type='text' name='name' placeholder='Name'>
+      <input type='number' name='amount' placeholder='Amount'>
+      <select name='period'>
+        <option value='day'>Day</option>
+        <option value='week'>Week</option>
+        <option value='month'>Month</option>
+        <option value='year'>Year</option>
+      </select>
+
+      <button type='submit'>Submit</button>
+    </form>
+
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Amount</th>
+        <th>Per</th>
+      </tr>
+      {% for e in expenses %}
+      <tr>
+        <td>{{e.name}}</td>
+        <td>{{e.amount_per_year / [365, 52, 12, 1][e.pro_rated - 1]}}</td>
+        <td>{{['Day', 'Week', 'Month', 'Year'][e.pro_rated - 1]}}</td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.0/js/foundation.min.js'></script>
+    <script>
+      $(document).foundation();
+    </script>
+  </body>
+{% endblock %}

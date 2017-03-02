@@ -2,27 +2,30 @@
 
 {% block body -%}
   <body>
-    <div class='top-bar'>
-      <div class='top-bar-left'>
-        <ul class='dropdown menu' data-dropdown-menu>
-          <li class='menu-text'>Wallet</li>
-          <li><a href='{{url_for('Dashboard:index')}}'>Dashboard</a></li>
-          <li><a href='{{url_for('Dashboard:index')}}'>Your Income</a></li>
-          <li><a href='{{url_for('Dashboard:index')}}'>Your Expenses</a></li>
-          <li><a href='{{url_for('Dashboard:index')}}'>Your Rewards</a></li>
-        </ul>
-      </div>
-    </div>
+    {% include 'navbar.html' %}
 
-    You are currently {{'saving' if daily_diff > 0 else 'losing'}} money.
+    You are currently {{'saving' if daily_diff > 0 else 'losing'}} money.<br />
 
-    Every day: {{daily_diff}}
-    Every month: {{daily_diff * 365/12}}
-    Every year: {{daily_diff * 365}}
+    Every day: {{daily_diff}}<br />
+    Every month: {{daily_diff * 365/12}}<br />
+    Every year: {{daily_diff * 365}}<br />
 
-    Your yearly expenses
-    Your estimated savings
-    You will be able to afford your ITEM in TIME_MATHS
+    Your yearly expenses broken down<br />
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Percentage</th>
+      </tr>
+      {% for e in expenses %}
+      <tr>
+        <td>{{e.name}}</td>
+        <td>{{e.amount_per_year / annual_expenses * 100}}</td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    Your estimated savings<br />
+    You will be able to afford your ITEM in TIME_MATHS<br />
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.0/js/foundation.min.js'></script>
     <script>
