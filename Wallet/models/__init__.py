@@ -11,6 +11,7 @@ class Income(app.db.Model):
     name = app.db.Column(app.db.String())
     amount_per_year = app.db.Column(app.db.Numeric)
     pro_rated = app.db.Column(app.db.Integer)
+    date_added = app.db.Column(app.db.DateTime)
 
 
 class Expense(app.db.Model):

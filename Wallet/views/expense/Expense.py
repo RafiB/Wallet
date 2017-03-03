@@ -1,4 +1,4 @@
-from flask_classy import FlaskView
+from flask_classy import FlaskView, route
 
 from flask import redirect, render_template, request, url_for
 
@@ -12,6 +12,12 @@ class Expense(FlaskView):
     def index(self):
         expenses = ExpenseDB.query.all()
         return render_template('expense.html', expenses=expenses)
+
+    @route('delete', methods=['POST'])
+    def delete(self):
+        ExpenseDB.query.filter(ExpenseDB.id == request.form['id']).delete()
+        app.db.session.commit()
+        return redirect(url_for('Expense:index'))
 
     def post(self):
         amount_per_year = float(request.form['amount'])

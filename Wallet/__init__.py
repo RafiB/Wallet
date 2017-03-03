@@ -1,6 +1,9 @@
 #!/usr/bin/python
 
+import locale
+
 from flask import (
+    g,
     Flask,
     render_template,
 )
@@ -13,6 +16,19 @@ app.config.from_object('Wallet.default_settings')
 
 db = SQLAlchemy(app)
 app.db = db
+
+locale.setlocale(locale.LC_ALL, 'en_US.utf8')
+
+
+def format_currency(v):
+    return locale.currency(v, grouping=True)
+
+
+def generate_series(i):
+    return ', '.join([str(g.savings + float(i * m)) for m in xrange(13)])
+
+app.jinja_env.filters['format_currency'] = format_currency
+app.jinja_env.filters['generate_series'] = generate_series
 
 
 def do_register_views():

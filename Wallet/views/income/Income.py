@@ -1,4 +1,6 @@
-from flask_classy import FlaskView
+from datetime import datetime
+
+from flask_classy import FlaskView, route
 
 from flask import redirect, render_template, request, url_for
 
@@ -12,6 +14,12 @@ class Income(FlaskView):
     def index(self):
         income = IncomeDB.query.all()
         return render_template('income.html', income=income)
+
+    @route('delete', methods=['POST'])
+    def delete(self):
+        IncomeDB.query.filter(IncomeDB.id == request.form['id']).delete()
+        app.db.session.commit()
+        return redirect(url_for('Income:index'))
 
     def post(self):
         amount_per_year = float(request.form['amount'])
@@ -31,6 +39,7 @@ class Income(FlaskView):
         income.name = request.form['name']
         income.amount_per_year = amount_per_year
         income.pro_rated = pro_rated
+        income.date_added = datetime.now()
         app.db.session.add(income)
         app.db.session.commit()
 

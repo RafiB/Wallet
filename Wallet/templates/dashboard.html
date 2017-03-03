@@ -1,33 +1,119 @@
 {% extends 'common.html' %}
 
+{% block head %}
+  {{ super() }}
+
+  <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.css' media='all'>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.1/js/foundation.min.js'></script>
+{% endblock %}
+
 {% block body -%}
   <body>
     {% include 'navbar.html' %}
 
-    You are currently {{'saving' if daily_diff > 0 else 'losing'}} money.<br />
-
-    Every day: {{daily_diff}}<br />
-    Every month: {{daily_diff * 365/12}}<br />
-    Every year: {{daily_diff * 365}}<br />
-
-    Your yearly expenses broken down<br />
-    <table>
-      <tr>
-        <th>Name</th>
-        <th>Percentage</th>
-      </tr>
-      {% for e in expenses %}
-      <tr>
-        <td>{{e.name}}</td>
-        <td>{{e.amount_per_year / annual_expenses * 100}}</td>
-      </tr>
-      {% endfor %}
-    </table>
-
-    Your estimated savings<br />
-    You will be able to afford your ITEM in TIME_MATHS<br />
+    <div id='dashboard' class='row align-justify align-stretch'>
+      <div class='column flex-container flex-dir-column'>
+        <div id='money-diff' class='row flex-child-auto align-center'>
+          <div class='column flex-child-auto'>
+            Every day:<br />{{daily_diff | format_currency}}
+          </div>
+          <div class='column flex-child-auto'>
+            Every month:<br />{{(daily_diff * 365/12) | format_currency}}
+          </div>
+          <div class='column flex-child-auto'>
+            Every year:<br />{{(daily_diff * 365) | format_currency}}
+          </div>
+        </div>
+        <div id='info' class='row flex-child-auto align-justify align-stretch'>
+          <div id='pie-chart' class='column'>
+            Your yearly expenses broken down<br />
+            <div id='pie'></div>
+          </div>
+          <div id='right' class='column flex-container flex-dir-column'>
+            <div id='saving-chart' class='flex-child-auto'>
+              Your estimated savings<br />
+              <div id='trend'></div>
+            </div>
+            <div id='afford-times' class='flex-child-auto'>
+              {% for r in rewards %}
+                You will be able to afford your {{r.name}} in <b>{{r.time_string}}</b><br />
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.0/js/foundation.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.js'></script>
+    <script>
+      var chart = c3.generate({
+        bindto: '#trend',
+        data: {
+          columns: [
+            ['Savings', {{(daily_diff*365/12)|generate_series}}],
+            ['Rewards Sum', {{([rewards_total]*13)|join(',')}}],
+          ],
+        },
+        axis: {
+          x: {
+            tick: {
+              format: function (i) {
+                var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+                  'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                var month = new Date().getMonth();
+                return months.slice(month).concat(months.slice(0, month))[i%12];
+              },
+            },
+          },
+          y: {
+            min: 0,
+            tick: {
+              format: function(i) {return '$' + i},
+            },
+          },
+        },
+        legend: {
+          show: false,
+        },
+        tooltip: {
+          format: {
+            value: function (value, ratio, id, index) { return '$' + value.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,'); }
+          },
+        },
+      });
+
+      var chart = c3.generate({
+        bindto: '#pie',
+        data: {
+          type: 'pie',
+          columns: [
+          {% for e in expenses %}
+            ['{{e.name}}', {{e.amount_per_year}}],
+          {% endfor %}
+          ],
+        },
+        pie: {
+          label: {
+            show: true,
+            format: function (value, ratio, id) {
+              return id + ': $' + (ratio * {{annual_expenses}}).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
+            }
+          },
+        },
+        legend: {
+          show: false,
+        },
+        tooltip: {
+          format: {
+            value: function (value, ratio, id, index) { return '$' + value.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,'); }
+          },
+        },
+      });
+      chart.resize({height: $('#pie-chart').height()});
+    </script>
     <script>
       $(document).foundation();
     </script>

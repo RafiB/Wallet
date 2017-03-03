@@ -26,8 +26,14 @@
       {% for i in income %}
       <tr>
         <td>{{i.name}}</td>
-        <td>{{i.amount_per_year / [365, 52, 12, 1][i.pro_rated - 1]}}</td>
+        <td>{{(i.amount_per_year / [365, 52, 12, 1][i.pro_rated - 1]) | format_currency}}</td>
         <td>{{['Day', 'Week', 'Month', 'Year'][i.pro_rated - 1]}}</td>
+        <td>
+          <form action='{{url_for('Income:delete')}}' method='POST'>
+            <input type='hidden' name='id' value='{{i.id}}'>
+            <button type='submit'>Delete</button>
+          </form>
+        </td>
       </tr>
       {% endfor %}
     </table>
